@@ -48,15 +48,6 @@ CREATE TABLE `issue` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `issue`
---
-
-LOCK TABLES `issue` WRITE;
-/*!40000 ALTER TABLE `issue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `issue` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `issue_activity`
 --
 
@@ -67,7 +58,6 @@ CREATE TABLE `issue_activity` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `issue_id` int(11) DEFAULT NULL,
-  `creator_id` int(11) DEFAULT NULL,
   `assign_to` int(11) DEFAULT NULL,
   `description` mediumtext,
   `status_id` int(11) DEFAULT NULL,
@@ -76,28 +66,17 @@ CREATE TABLE `issue_activity` (
   `priority_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_issue_id_idx` (`issue_id`),
-  KEY `fk_creator_id_idx` (`creator_id`),
   KEY `fk_project_version_id_idx` (`project_version_id`),
   KEY `fk_assign_to_idx` (`assign_to`),
   KEY `fk_activity_status_id_idx` (`status_id`),
   KEY `fk_activity_priority_id_idx` (`priority_id`),
   CONSTRAINT `fk_activity_assign_to` FOREIGN KEY (`assign_to`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_activity_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_activity_priority_id` FOREIGN KEY (`priority_id`) REFERENCES `issue_priority` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_activity_project_version_id` FOREIGN KEY (`project_version_id`) REFERENCES `project_version` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_activity_status_id` FOREIGN KEY (`status_id`) REFERENCES `issue_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `issue_activity`
---
-
-LOCK TABLES `issue_activity` WRITE;
-/*!40000 ALTER TABLE `issue_activity` DISABLE KEYS */;
-/*!40000 ALTER TABLE `issue_activity` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `issue_priority`
@@ -116,15 +95,6 @@ CREATE TABLE `issue_priority` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `issue_priority`
---
-
-LOCK TABLES `issue_priority` WRITE;
-/*!40000 ALTER TABLE `issue_priority` DISABLE KEYS */;
-/*!40000 ALTER TABLE `issue_priority` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `issue_status`
 --
 
@@ -141,15 +111,6 @@ CREATE TABLE `issue_status` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `issue_status`
---
-
-LOCK TABLES `issue_status` WRITE;
-/*!40000 ALTER TABLE `issue_status` DISABLE KEYS */;
-/*!40000 ALTER TABLE `issue_status` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `project`
 --
 
@@ -164,44 +125,6 @@ CREATE TABLE `project` (
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `project`
---
-
-LOCK TABLES `project` WRITE;
-/*!40000 ALTER TABLE `project` DISABLE KEYS */;
-/*!40000 ALTER TABLE `project` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `project_participant`
---
-
-DROP TABLE IF EXISTS `project_participant`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `project_participant` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `project_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `role` int(2) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_user_idx` (`user_id`),
-  KEY `fk_project_idx` (`project_id`),
-  CONSTRAINT `fk_project` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `project_participant`
---
-
-LOCK TABLES `project_participant` WRITE;
-/*!40000 ALTER TABLE `project_participant` DISABLE KEYS */;
-/*!40000 ALTER TABLE `project_participant` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `project_version`
@@ -223,13 +146,23 @@ CREATE TABLE `project_version` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `project_version`
+-- Table structure for table `project_version_participant`
 --
 
-LOCK TABLES `project_version` WRITE;
-/*!40000 ALTER TABLE `project_version` DISABLE KEYS */;
-/*!40000 ALTER TABLE `project_version` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `project_version_participant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `project_version_participant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_version_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `role` int(2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_user_idx` (`user_id`),
+  CONSTRAINT `fk_project_version_id` FOREIGN KEY (`id`) REFERENCES `project_version` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `user`
@@ -255,17 +188,8 @@ CREATE TABLE `user` (
   UNIQUE KEY `email_UNIQUE` (`email`),
   UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `api_key_UNIQUE` (`api_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -276,4 +200,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-15 13:05:48
+-- Dump completed on 2020-02-26 16:24:00
