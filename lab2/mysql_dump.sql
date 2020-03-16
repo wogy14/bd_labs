@@ -18,7 +18,7 @@
 --
 -- Table structure for table `issue`
 --
-
+USE `docker_example`;
 DROP TABLE IF EXISTS `issue`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -33,12 +33,8 @@ CREATE TABLE `issue` (
   `priority_id` int(11) DEFAULT NULL,
   `status_id` int(11) DEFAULT NULL,
   `project_version_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_issue_1_idx` (`creator_id`),
-  KEY `fk_assign_to_id_idx` (`assign_to`),
-  KEY `fk_project_version_id_idx` (`project_version_id`),
-  KEY `fk_issue_status_id_idx` (`status_id`),
-  KEY `fk_issue_priority_id_idx` (`priority_id`),
+  PRIMARY KEY (`id`), 
+	UNIQUE KEY `new_UNIQUE` (`project_version_id`, `status_id`), 
   CONSTRAINT `fk_issue_assign_to_id` FOREIGN KEY (`assign_to`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_issue_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_issue_priority_id` FOREIGN KEY (`priority_id`) REFERENCES `issue_priority` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -64,12 +60,7 @@ CREATE TABLE `issue_activity` (
   `project_version_id` int(11) DEFAULT NULL,
   `created_date` int(11) DEFAULT NULL,
   `priority_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_issue_id_idx` (`issue_id`),
-  KEY `fk_project_version_id_idx` (`project_version_id`),
-  KEY `fk_assign_to_idx` (`assign_to`),
-  KEY `fk_activity_status_id_idx` (`status_id`),
-  KEY `fk_activity_priority_id_idx` (`priority_id`),
+  PRIMARY KEY (`id`),  
   CONSTRAINT `fk_activity_assign_to` FOREIGN KEY (`assign_to`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_activity_issue_id` FOREIGN KEY (`issue_id`) REFERENCES `issue` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_activity_priority_id` FOREIGN KEY (`priority_id`) REFERENCES `issue_priority` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -139,8 +130,7 @@ CREATE TABLE `project_version` (
   `description` mediumtext,
   `project_id` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_project_id_idx` (`project_id`),
+  PRIMARY KEY (`id`),  
   CONSTRAINT `fk_project_id` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -157,8 +147,7 @@ CREATE TABLE `project_version_participant` (
   `project_version_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `role` int(2) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_user_idx` (`user_id`),
+  PRIMARY KEY (`id`),  
   CONSTRAINT `fk_project_version_id` FOREIGN KEY (`id`) REFERENCES `project_version` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
